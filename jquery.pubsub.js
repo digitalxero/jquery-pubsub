@@ -1,16 +1,53 @@
+/*!
+ * $ PubSub Plugin 1.1
+ * https://github.com/KanbanSolutions/jquery-pubsub
+ * Requires $ 1.7.2
+ *
+ * Copyright (c) 2012, Kanban Solutions
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+ * following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+ * disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided with the distribution.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
 /*
-    Implementation of pubsub that allows for hierarchical categorical publish and subscribe
-    categories are . seperated
-        all subscriptions to `c49` or `c49.filter` or `c49.filter.change` would get messages published to `c49.filter.change`
-        but subscriptions to `c49.filter.change` would not get messages published to `c49.filter`
+Implementation of pubsub that allows for hierarchical categorical publish and subscribe categories are . separated.
+all subscriptions to `base` or `base.item` or `base.item.action` would get messages published to `base.item.action` but subscriptions to `base.item.action` would not get messages published to `base.item`
 
-        the first paramater sent to listeners is the full topic, so listeners can do their own filtering if they subscribe to a more general topic
-        You can (un)subscribe to multiple topics by seperating them by spaces, this does limit it to events with no spaces in their names though
-            You can publish to multiple topics the same way, just remember that the system automatically publishes to the less specific topics
+The first parameter sent to listeners is the full topic, so listeners can do their own filtering if they subscribe to a more general topic
+You can (un)subscribe to multiple topics by separating them by spaces, this does limit it to events with no spaces in their names though
+You can publish to multiple topics the same way, just remember that the system automatically publishes to the less specific topics
 
-    jQuery.pubsub.subscribe('c49.filter.change', function(topic, msg){console.log(topic, ': ', msg)});
-    jQuery.pubsub.publish('c49.filter.change', {"action":"add", "filter":{"value":1,"label":"The price filter"}});
-    jQuery.pubsub.subscribe('c49.filter.change c49.facet.results', function(topic, msg){console.log(topic, ': ', msg)});
+    jQuery.pubsub.subscribe('c49.filter.change', function(topic, msg){
+        //Do something on filter change
+    });
+
+    jQuery.pubsub.publish('c49.filter.change', {
+        "action":"add",
+        "filter":{"value":1,"label":"The price filter"}
+    });
+
+    jQuery.pubsub.subscribe('c49', function(topic, msg){
+        //c49 Super Listener to log all messages
+        console.log(topic, ': ', msg);
+    });
+
+    jQuery.pubsub.subscribe('*', function(topic, msg){
+        //Global Super Listener to log all messages regardless of topic
+        console.log(topic, ': ', msg);
+    });
 
 */
 // requestAnimFrame shim layer with setTimeout fallback
