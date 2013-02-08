@@ -8,20 +8,20 @@ You can (un)subscribe to multiple topics by separating them by spaces, this does
 You can publish to multiple topics the same way, just remember that the system automatically publishes to the less specific topics
 
     jQuery.pubsub.subscribe('c49.filter.change', function(topic, msg){
-    	//Do something on filter change
+        //Do something on filter change
     });
 
     jQuery.pubsub.publish('c49.filter.change', {
-    	"action":"add",
-    	"filter":{"value":1,"label":"The price filter"}
+        "action":"add",
+        "filter":{"value":1,"label":"The price filter"}
     });
 
     jQuery.pubsub.subscribe('c49', function(topic, msg){
-    	//c49 Super Listener to log all messages
-    	console.log(topic, ': ', msg);
+        //c49 Super Listener to log all messages
+        console.log(topic, ': ', msg);
     });
 
     jQuery.pubsub.subscribe('*', function(topic, msg){
-    	//Global Super Listener to log all messages regardless of topic
-    	console.log(topic, ': ', msg);
+        //Global Super Listener to log all messages regardless of topic
+        console.log(topic, ': ', msg);
     });
