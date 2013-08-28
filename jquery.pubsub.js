@@ -23,7 +23,8 @@
 
 /*
 Implementation of pubsub that allows for hierarchical categorical publish and subscribe categories are . separated.
-all subscriptions to `base` or `base.item` or `base.item.action` would get messages published to `base.item.action` but subscriptions to `base.item.action` would not get messages published to `base.item`
+all subscriptions to `base` or `base.item` or `base.item.action` would get messages published to `base.item.action` but
+subscriptions to `base.item.action` would not get messages published to `base.item`
 
 The first parameter sent to listeners is the full topic, so listeners can do their own filtering if they subscribe to a more general topic
 You can (un)subscribe to multiple topics by separating them by spaces, this does limit it to events with no spaces in their names though
@@ -62,6 +63,8 @@ window.requestAnimFrame = (function(){
 })();
 
 (function($){
+    "use strict";
+
     var _public = {};
     var _private = {};
 
@@ -141,6 +144,10 @@ window.requestAnimFrame = (function(){
         }
     };
 
+    _public.clear = function clear(topic) {
+        _private.topics[topic] = $.Callbacks('unique memory');
+    };
+
     _private.parse_topics = function parse_topics(topic_string) {
         return topic_string.split(' ');
     };
@@ -155,8 +162,20 @@ window.requestAnimFrame = (function(){
         }
     };
 
-    _public.subscribe('*', function(topic, msg) {
-        console.log('PubSub Super Listner: ', topic, msg);
+    _public.subscribe('*', function(topic) {
+        if(!console) {
+            return;
+        }
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        if(console.group) {
+            console.group('PubSub Super Listner');
+            console.debug('Topic: ', topic);
+            console.debug('Arguments: ', args);
+            console.groupEnd('PubSub Super Listner');
+        } else {
+            console.log('PubSub Super Listner: ', topic, args);
+        }
     });
 
     $.pubsub = _public;
