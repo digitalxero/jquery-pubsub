@@ -1,0 +1,30 @@
+{
+  "name": "jquery-pubsub",
+  "version": "1.0.3",
+  "homepage": "https://github.com/KanbanSolutions/jquery-pubsub",
+  "authors": [
+    "DJ Gilcrease <dj.gilcrease@kanbansolutions.com>"
+  ],
+  "description": "A fast extensible pubsub system using jQuery Callbacks",
+  "main": "./jquery.pubsub.js",
+  "keywords": [
+    "pubsub",
+    "jquery",
+    "plugin",
+    "publish",
+    "subscribe",
+    "events"
+  ],
+  "dependencies": {
+    "jquery": ">=1.7"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "*.json",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
