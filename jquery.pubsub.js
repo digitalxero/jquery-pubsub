@@ -148,6 +148,21 @@ window.requestAnimFrame = (function(){
         _private.topics[topic] = $.Callbacks('unique memory');
     };
 
+
+    /**
+     * Call clear on all stored topics
+     * @public
+     */
+    _public.purge = function purge() {
+        var topic;
+        for (topic in _private.topics) {
+            if (_private.topics.hasOwnProperty(topic)) {
+                _public.clear(topic);
+            }
+        }
+    };
+
+
     _private.parse_topics = function parse_topics(topic_string) {
         return topic_string.split(' ');
     };
