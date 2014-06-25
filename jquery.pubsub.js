@@ -1,6 +1,6 @@
 /* global window: true, navigator: false, document: true, importScripts: false, jQuery: true */
 /*!
- * $ PubSub Plugin 1.1
+ * $ PubSub Plugin 1.1.1
  * https://github.com/KanbanSolutions/jquery-pubsub
  * Requires $ 1.7.2
  *
@@ -65,7 +65,7 @@ window.requestAnimFrame = (function(){
 (function($){
     "use strict";
 
-    var _public = {};
+    var _public = {debug: false};
     var _private = {};
 
     _private.topics = {'*':$.Callbacks('unique memory')};
@@ -179,6 +179,9 @@ window.requestAnimFrame = (function(){
 
     _public.subscribe('*', function(topic) {
         if(!console) {
+            return;
+        }
+        if(!_public.debug) {
             return;
         }
         var args = Array.prototype.slice.call(arguments, 1);
