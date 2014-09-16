@@ -1,4 +1,3 @@
-/* global window: true, navigator: false, document: true, importScripts: false, jQuery: true */
 /*!
  * $ PubSub Plugin 1.1
  * https://github.com/KanbanSolutions/jquery-pubsub
@@ -50,19 +49,31 @@ You can publish to multiple topics the same way, just remember that the system a
     });
 
 */
-// requestAnimFrame shim layer with setTimeout fallback
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function( callback ){
-            window.setTimeout(callback, 42); //This is 24 frames per sec, if Film works here so will web animations
-          };
-})();
 
-(function($){
+/**
+ * requestAnimFrame shim layer with setTimeout fallback
+ */
+(function () {
+    "use strict";
+    window.requestAnimFrame = (function () {
+        return window.requestAnimationFrame       ||
+               window.webkitRequestAnimationFrame ||
+               window.mozRequestAnimationFrame    ||
+               window.oRequestAnimationFrame      ||
+               window.msRequestAnimationFrame     ||
+               function (callback) {
+                   //This is 24 frames per sec, if Film works here so will web animations
+                   window.setTimeout(callback, 42);
+               };
+    }());
+}());
+
+
+
+/**
+ * jQuery PubSub
+ */
+(function ($) {
     "use strict";
 
     var _public = {};
@@ -128,7 +139,7 @@ window.requestAnimFrame = (function(){
 
     _public.unsubscribe = function unsubscribe(topics, cb) {
         if(!$.isFunction(cb)) {
-            console.error('You must unsubscribe with a function')
+            console.error('You must unsubscribe with a function');
         }
 
         var i,tlen,topic;
@@ -194,4 +205,5 @@ window.requestAnimFrame = (function(){
     });
 
     $.pubsub = _public;
+
 }(jQuery));
