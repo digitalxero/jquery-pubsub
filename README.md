@@ -1,5 +1,8 @@
 jquery-pubsub
 =============
+
+[![Build Status](https://travis-ci.org/pgoldrbx/jquery-pubsub.svg?branch=master)](https://travis-ci.org/pgoldrbx/jquery-pubsub)
+
 Implementation of pubsub that allows for hierarchical categorical publish and subscribe categories are . separated.
 all subscriptions to `base` or `base.item` or `base.item.action` would get messages published to `base.item.action` but subscriptions to `base.item.action` would not get messages published to `base.item`
 
