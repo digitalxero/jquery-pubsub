@@ -12,7 +12,7 @@
     var rename  = require('gulp-rename');
     var uglify  = require('gulp-uglify');
     var karma   = require('karma');
-
+    var coveralls = require('gulp-coveralls');
 
 
     /**
@@ -64,12 +64,18 @@
 
 
     // Build: copy and minify
-    gulp.task('build', ['lint', 'test'], function () {
+    gulp.task('build', ['lint', 'test', 'cover'], function () {
         return gulp.src(paths.src, { base: paths.base })
             .pipe(gulp.dest(paths.dest))
             .pipe(uglify())
             .pipe(rename('jquery.pubsub.min.js'))
             .pipe(gulp.dest('dist'));
+    });
+
+
+    gulp.task('cover', ['test'], function () {
+        return gulp.src('test/coverage/**/lcov.info')
+            .pipe(coveralls());
     });
 
 }());

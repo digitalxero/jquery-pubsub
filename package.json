@@ -33,6 +33,8 @@
     "jquery": "^2.1.1",
     "jshint-stylish": "^0.4.0",
     "karma-spec-reporter": "0.0.13",
-    "karma-coverage": "^0.2.6"
+    "karma-coverage": "^0.2.6",
+    "coveralls": "^2.11.1",
+    "gulp-coveralls": "^0.1.3"
   }
 }
