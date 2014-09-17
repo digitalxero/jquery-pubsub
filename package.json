@@ -23,7 +23,7 @@
   "homepage": "http://plugins.jquery.com/jquery-pubsub/",
   "devDependencies": {
     "gulp": "^3.8.8",
-    "karma-jasmine": "^0.1.5",
+    "karma-jasmine": "^0.2",
     "karma": "^0.12.23",
     "gulp-jshint": "^1.8.4",
     "karma-phantomjs-launcher": "^0.1.4",

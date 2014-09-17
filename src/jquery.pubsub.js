@@ -204,6 +204,12 @@ You can publish to multiple topics the same way, just remember that the system a
         }
     });
 
+
+    // Expose private scope for unit tests
+    if (window.__karma__) {
+        _public._ = _private;
+    }
+
     $.pubsub = _public;
 
 }(jQuery));
