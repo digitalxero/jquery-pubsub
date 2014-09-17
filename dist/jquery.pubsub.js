@@ -76,7 +76,7 @@ You can publish to multiple topics the same way, just remember that the system a
 (function ($) {
     "use strict";
 
-    var _public = {};
+    var _public = {debug: false};
     var _private = {};
 
     _private.topics = {'*':$.Callbacks('unique memory')};
@@ -190,6 +190,9 @@ You can publish to multiple topics the same way, just remember that the system a
 
     _public.subscribe('*', function(topic) {
         if(!console) {
+            return;
+        }
+        if(!_public.debug) {
             return;
         }
         var args = Array.prototype.slice.call(arguments, 1);
