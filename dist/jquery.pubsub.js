@@ -1,5 +1,5 @@
 /*!
- * $ PubSub Plugin 1.1.1
+ * $ PubSub Plugin 1.1
  * https://github.com/KanbanSolutions/jquery-pubsub
  * Requires $ 1.7.2
  *
@@ -76,7 +76,7 @@ You can publish to multiple topics the same way, just remember that the system a
 (function ($) {
     "use strict";
 
-    var _public = {debug: false};
+    var _public = {};
     var _private = {};
 
     _private.topics = {'*':$.Callbacks('unique memory')};
@@ -192,9 +192,6 @@ You can publish to multiple topics the same way, just remember that the system a
         if(!console) {
             return;
         }
-        if(!_public.debug) {
-            return;
-        }
         var args = Array.prototype.slice.call(arguments, 1);
 
         if(console.group) {
@@ -206,6 +203,12 @@ You can publish to multiple topics the same way, just remember that the system a
             console.log('PubSub Super Listner: ', topic, args);
         }
     });
+
+
+    // Expose private scope for unit tests
+    if (window.__karma__) {
+        _public._ = _private;
+    }
 
     $.pubsub = _public;
 
