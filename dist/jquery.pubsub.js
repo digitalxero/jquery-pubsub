@@ -1,6 +1,5 @@
-/* global window: true, navigator: false, document: true, importScripts: false, jQuery: true */
 /*!
- * $ PubSub Plugin 1.1.1
+ * $ PubSub Plugin 1.1
  * https://github.com/KanbanSolutions/jquery-pubsub
  * Requires $ 1.7.2
  *
@@ -50,22 +49,34 @@ You can publish to multiple topics the same way, just remember that the system a
     });
 
 */
-// requestAnimFrame shim layer with setTimeout fallback
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function( callback ){
-            window.setTimeout(callback, 42); //This is 24 frames per sec, if Film works here so will web animations
-          };
-})();
 
-(function($){
+/**
+ * requestAnimFrame shim layer with setTimeout fallback
+ */
+(function () {
+    "use strict";
+    window.requestAnimFrame = (function () {
+        return window.requestAnimationFrame       ||
+               window.webkitRequestAnimationFrame ||
+               window.mozRequestAnimationFrame    ||
+               window.oRequestAnimationFrame      ||
+               window.msRequestAnimationFrame     ||
+               function (callback) {
+                   //This is 24 frames per sec, if Film works here so will web animations
+                   window.setTimeout(callback, 42);
+               };
+    }());
+}());
+
+
+
+/**
+ * jQuery PubSub
+ */
+(function ($) {
     "use strict";
 
-    var _public = {debug: false};
+    var _public = {};
     var _private = {};
 
     _private.topics = {'*':$.Callbacks('unique memory')};
@@ -128,7 +139,7 @@ window.requestAnimFrame = (function(){
 
     _public.unsubscribe = function unsubscribe(topics, cb) {
         if(!$.isFunction(cb)) {
-            console.error('You must unsubscribe with a function')
+            console.error('You must unsubscribe with a function');
         }
 
         var i,tlen,topic;
@@ -181,9 +192,6 @@ window.requestAnimFrame = (function(){
         if(!console) {
             return;
         }
-        if(!_public.debug) {
-            return;
-        }
         var args = Array.prototype.slice.call(arguments, 1);
 
         if(console.group) {
@@ -196,5 +204,12 @@ window.requestAnimFrame = (function(){
         }
     });
 
+
+    // Expose private scope for unit tests
+    if (window.__karma__) {
+        _public._ = _private;
+    }
+
     $.pubsub = _public;
+
 }(jQuery));
