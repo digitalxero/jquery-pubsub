@@ -167,12 +167,25 @@
 
                     jQuery.pubsub.publishWith(window, testTopic.join(' '));
                 });
+
+                it('creates a new Callbacks object for topic(s) not found', function () {
+                    expect(jQuery.pubsub._.topics['unknown-topic']).toBeUndefined();
+                    jQuery.pubsub.publishWith(window, 'unknown-topic');
+                    expect(typeof jQuery.pubsub._.topics['unknown-topic']).toBe('object');
+                    expect(typeof jQuery.pubsub._.topics['unknown-topic'].fireWith).toBe('function');
+                });
             });
 
 
             describe('subscribe()', function () {
                 it('should have a subscribe() method', function () {
                     expect(typeof jQuery.pubsub.subscribe).toBe('function');
+                });
+
+                it('should log an error when missing required callback', function () {
+                    spyOn(window.console, 'error');
+                    jQuery.pubsub.subscribe('foo');
+                    expect(window.console.error).toHaveBeenCalled();
                 });
 
                 it('should register a callback for a topic', function (done) {
@@ -235,6 +248,12 @@
             describe('unsubscribe()', function () {
                 it('should have an unsubscribe() method', function () {
                     expect(typeof jQuery.pubsub.unsubscribe).toBe('function');
+                });
+
+                it('should log an error when missing required callback', function () {
+                    spyOn(window.console, 'error');
+                    jQuery.pubsub.unsubscribe('foo');
+                    expect(window.console.error).toHaveBeenCalled();
                 });
 
                 it('should be fully tested', function () {
