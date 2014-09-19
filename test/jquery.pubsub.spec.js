@@ -109,14 +109,6 @@
          */
         describe('Public API', function () {
 
-            beforeEach(function () {
-            });
-
-            afterEach(function () {
-                jQuery.pubsub.purge();
-            });
-
-
             describe('publish()', function () {
                 it('should have a publish() method', function () {
                     expect(typeof jQuery.pubsub.publish).toBe('function');
@@ -132,8 +124,8 @@
                         expect(topic).toBe(testTopic);
                         expect(data).toEqual(testData);
 
-                        delete jQuery.pubsub._.topics[testTopic];
-                        expect(topics[testTopic]).toBeUndefined();
+                        jQuery.pubsub.clear(testTopic);
+                        expect(topics[testTopic].has()).toBe(false);
 
                         done();
                     });
@@ -150,6 +142,7 @@
                 });
 
                 it('should execute namespaced topics', function (done) {
+                    var topics = jQuery.pubsub._.topics;
                     var count = 0;
 
                     var ns = 'test-publish-with';
@@ -158,12 +151,10 @@
                     function callback(topic) {
                         count++;
 
-                        jQuery.pubsub.unsubscribe(topic, callback);
-
                         if (count === 5) {
-                            delete jQuery.pubsub._.topics[ns];
-                            delete jQuery.pubsub._.topics[testTopic[0]];
-                            delete jQuery.pubsub._.topics[testTopic[1]];
+                            jQuery.pubsub.clear(topics[ns]);
+                            jQuery.pubsub.clear(topics[testTopic[0]]);
+                            jQuery.pubsub.clear(topics[testTopic[1]]);
 
                             done();
                         }
@@ -314,6 +305,116 @@
 
         });
         // end: public api
+
+
+
+        /**
+         * Debug settings and console output
+         */
+        describe('Debug', function () {
+            it('has a private debug object', function () {
+                expect(typeof jQuery.pubsub._.debug).toBe('object');
+            });
+
+            describe('log()', function () {
+
+                it('has a private debug.log() method', function () {
+                    expect(typeof jQuery.pubsub._.debug.log).toBe('function');
+                });
+
+                it('suppresses output if window.console is not defined', function () {
+                    var origConsole = window.console;
+                    window.console = undefined;
+
+                    var logMethod = origConsole.group ? 'debug' : 'log';
+
+                    spyOn(origConsole, logMethod);
+                    jQuery.pubsub._.debug.log();
+                    expect(origConsole[logMethod]).not.toHaveBeenCalled();
+
+                    window.console = origConsole;
+                    expect(window.console).toBe(origConsole);
+                });
+
+                it('suppresses output if public debug property is not set', function () {
+                    jQuery.pubsub.debug = false;
+
+                    var logMethod = window.console.group ? 'debug' : 'log';
+
+                    spyOn(window.console, logMethod);
+                    jQuery.pubsub._.debug.log();
+                    expect(window.console[logMethod]).not.toHaveBeenCalled();
+                });
+
+                it('successful output if public debug property is set', function () {
+                    jQuery.pubsub.debug = true;
+
+                    var logMethod = window.console.group ? 'debug' : 'log';
+
+                    spyOn(window.console, logMethod);
+                    jQuery.pubsub._.debug.log();
+                    expect(window.console[logMethod]).toHaveBeenCalled();
+                });
+
+                it('uses console.group and console.debug if defined', function () {
+                    jQuery.pubsub.debug = true;
+
+                    var origGroup = window.console.group;
+                    if (!window.console.group) {
+                        window.console.group = function () {};
+                    }
+
+                    var origDebug = window.console.debug;
+                    if (!window.console.debug) {
+                        window.console.debug = function () {};
+                    }
+
+                    spyOn(window.console, 'group');
+                    spyOn(window.console, 'debug');
+
+                    jQuery.pubsub._.debug.log();
+
+                    expect(window.console.group).toHaveBeenCalled();
+                    expect(window.console.debug).toHaveBeenCalled();
+
+                    window.console.group = origGroup;
+                    expect(window.console.group).toBe(origGroup);
+                    window.console.debug = origDebug;
+                    expect(window.console.debug).toBe(origDebug);
+                });
+
+                it('falls back to console.log if console.group is undefined', function () {
+                    jQuery.pubsub.debug = true;
+
+                    var origGroup = window.console.group;
+                    window.console.group = undefined;
+
+                    spyOn(window.console, 'log');
+                    jQuery.pubsub._.debug.log();
+                    expect(window.console.log).toHaveBeenCalled();
+
+                    window.console.group = origGroup;
+                    expect(window.console.group).toBe(origGroup);
+                });
+            });
+
+            describe('subscribe()', function () {
+                it('has a subscribe method', function () {
+                    expect(typeof jQuery.pubsub._.debug.subscribe).toBe('function');
+                });
+
+                it('log is subscribed for all topics', function (done) {
+                    spyOn(jQuery.pubsub._.debug, 'log').and.callFake(function () {
+                        done();
+                    });
+
+                    jQuery.pubsub._.debug.subscribe();
+                    jQuery.pubsub.publish('*');
+                });
+
+            });
+
+        });
 
     });
 

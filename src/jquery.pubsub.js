@@ -271,33 +271,63 @@ You can publish to multiple topics the same way, just remember that the system a
 
 
 
-    // Subscribe to all topics for debug logging
-    _public.subscribe('*', function (topic) {
-        var args;
+    /**
+     * Debug logging
+     * @namespace debug
+     */
+    _private.debug = {
 
-        // return if console is not defined
-        if (!window.console) {
-            return;
+        /**
+         * Subscribe to all topics for logging
+         */
+        subscribe: function debugSubscribe() {
+            _public.subscribe('*', _private.debug.log);
+        },
+
+
+        /**
+         * Subscribe to all topics for debug logging
+         * @param {String} topic PubSub topic
+         */
+        log: function debugLog(topic) {
+            var args;
+
+            // return if console is not defined
+            if (!window.console) {
+                return;
+            }
+
+            // return if not in debug mode
+            if (!_public.debug) {
+                return;
+            }
+
+            // Get arguments passed to the callback
+            args = Array.prototype.slice.call(arguments, 1);
+
+            // Use group logging if available
+            if (console.group) {
+                console.group('PubSub Super Listner');
+                console.debug('Topic: ', topic);
+                console.debug('Arguments: ', args);
+                console.groupEnd('PubSub Super Listner');
+            } else {
+                console.log('PubSub Super Listner: ', topic, args);
+            }
         }
 
-        // return if not in debug mode
-        if (!_public.debug) {
-            return;
-        }
+    };
+    // end: __private.debug
 
-        // Get arguments passed to the callback
-        args = Array.prototype.slice.call(arguments, 1);
 
-        // Use group logging if available
-        if (console.group) {
-            console.group('PubSub Super Listner');
-            console.debug('Topic: ', topic);
-            console.debug('Arguments: ', args);
-            console.groupEnd('PubSub Super Listner');
-        } else {
-            console.log('PubSub Super Listner: ', topic, args);
-        }
-    });
+
+    /*
+     * Initialize
+     */
+    (function init() {
+        _private.debug.subscribe();
+    }());
+
 
 
     // Expose private scope for unit tests
