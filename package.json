@@ -4,7 +4,8 @@
   "description": "Implementation of pubsub that allows for hierarchical categorical publish and subscribe.",
   "main": "jquery.pubsub.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "coveralls": "gulp cover"
   },
   "repository": {
     "type": "git",

@@ -74,7 +74,7 @@
 
 
     gulp.task('cover', ['test'], function () {
-        return gulp.src('test/coverage/**/lcov.info')
+        return gulp.src('coverage/**/lcov.info')
             .pipe(coveralls());
     });
 
