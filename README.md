@@ -1,7 +1,8 @@
 jquery-pubsub
 =============
 
-[![Build Status](https://travis-ci.org/pgoldrbx/jquery-pubsub.svg?branch=master)](https://travis-ci.org/pgoldrbx/jquery-pubsub) [![Coverage Status](https://coveralls.io/repos/pgoldrbx/jquery-pubsub/badge.png?branch=master)](https://coveralls.io/r/pgoldrbx/jquery-pubsub?branch=master)
+[![Build Status](https://travis-ci.org/Digitalxero/jquery-pubsub.svg?branch=master)](https://travis-ci.org/Digitalxero/jquery-pubsub) [![Coverage 
+Status](https://coveralls.io/repos/Digitalxero/jquery-pubsub/badge.png?branch=master)](https://coveralls.io/r/Digitalxero/jquery-pubsub?branch=master)
 
 Implementation of pubsub that allows for hierarchical categorical publish and subscribe categories are . separated.
 all subscriptions to `base` or `base.item` or `base.item.action` would get messages published to `base.item.action` but subscriptions to `base.item.action` would not get messages published to `base.item`
