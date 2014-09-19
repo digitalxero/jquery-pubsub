@@ -76,36 +76,70 @@ You can publish to multiple topics the same way, just remember that the system a
 (function ($) {
     "use strict";
 
-    var _public = {};
-    var _private = {};
-
-    _private.topics = {'*':$.Callbacks('unique memory')};
+    var _public,
+        _private;
 
 
+    // Scope objects
+    _public = {};
+    _private = {};
+
+
+    // Defaults
+    _public.debug = false;
+
+
+    // Topic cache
+    _private.topics = {
+        '*': $.Callbacks('unique memory')
+    };
+
+
+
+    /**
+     * Publish topics and pass all additional arguments
+     * @public
+     * @param {String} topics Topic(s) to publish
+     */
     _public.publish = function publish(topics) {
-        var args = [].slice.call(arguments);
+        var args;
+
+        args = [].slice.call(arguments);
         args.unshift(window);
+
         _public.publishWith.apply(this, args);
     };
 
-    _public.publishWith = function publishWith(context, topics) {
-        var i,tlen,topic_arr,topic, msg;
 
-        msg = [].slice.call(arguments);
+
+    /**
+     * Publish topics with specified context
+     * @public
+     * @param {Object} context Context to be used for `this` in callbacks
+     * @param {String} topics Topic(s) to publish
+     */
+    _public.publishWith = function publishWith(context, topics) {
+        var i,
+            tlen,
+            topic_arr,
+            topic,
+            msg;
+
+        msg = Array.prototype.slice.call(arguments);
         msg.shift(); //remove the context from the msg
         msg.shift(); //remove the topic from the msg
 
         topics = _private.parse_topics(topics);
         tlen = topics.length;
 
-        for(i=0; i<tlen; i++) {
+        for (i = 0; i < tlen; i++) {
             topic_arr = topics[i].split('.');
 
-            while(topic_arr.length) {
+            while (topic_arr.length) {
                 topic = topic_arr.join('.');
                 topic_arr.pop();
 
-                if(!_private.topics[topic]) {
+                if (!_private.topics[topic]) {
                     //This eliminates race condition issues where something may publish before someone subscribes
                     _private.topics[topic] = $.Callbacks('unique memory');
                 }
@@ -117,19 +151,29 @@ You can publish to multiple topics the same way, just remember that the system a
         }
     };
 
-    _public.subscribe = function subscribe(topics, cb) {
-        if(!$.isFunction(cb)) {
-            console.error('You must subscribe with a function', arguments);
-        }
 
-        var i,tlen,topic;
+
+    /**
+     * Subscribe for callback when a topic is published
+     * @public
+     * @param {String} topics Topic(s) to subscribe to
+     * @param {Function} cb Callback function
+     */
+    _public.subscribe = function subscribe(topics, cb) {
+        var i,
+            tlen,
+            topic;
+
+        if (!$.isFunction(cb)) {
+            console.error('You must subscribe with a function', [topics, cb]);
+        }
 
         topics = _private.parse_topics(topics);
         tlen = topics.length;
 
-        for(i=0; i<tlen; i++) {
+        for (i = 0; i < tlen; i++) {
             topic = topics[i];
-            if(!_private.topics[topic]) {
+            if (!_private.topics[topic]) {
                 _private.topics[topic] = $.Callbacks('unique memory');
             }
 
@@ -137,27 +181,45 @@ You can publish to multiple topics the same way, just remember that the system a
         }
     };
 
+
+
+    /**
+     * Unsubscribe from callback when a topic is published
+     * @public
+     * @param {String} topics Topic(s) to subscribe to
+     * @param {Function} cb Callback function
+     */
     _public.unsubscribe = function unsubscribe(topics, cb) {
-        if(!$.isFunction(cb)) {
+        var i,
+            tlen,
+            topic;
+
+        if (!$.isFunction(cb)) {
             console.error('You must unsubscribe with a function');
         }
-
-        var i,tlen,topic;
 
         topics = _private.parse_topics(topics);
         tlen = topics.length;
 
-        for(i=0; i<tlen; i++) {
+        for (i = 0; i < tlen; i++) {
             topic = topics[i];
-            if(_private.topics[topic]) {
+            if (_private.topics[topic]) {
                 _private.topics[topic].remove(cb);
             }
         }
     };
 
+
+
+    /**
+     * Clear all callbacks for a topic
+     * @public
+     * @param {String} topics Topic to clear
+     */
     _public.clear = function clear(topic) {
         _private.topics[topic] = $.Callbacks('unique memory');
     };
+
 
 
     /**
@@ -166,6 +228,7 @@ You can publish to multiple topics the same way, just remember that the system a
      */
     _public.purge = function purge() {
         var topic;
+
         for (topic in _private.topics) {
             if (_private.topics.hasOwnProperty(topic)) {
                 _public.clear(topic);
@@ -174,35 +237,97 @@ You can publish to multiple topics the same way, just remember that the system a
     };
 
 
+
+    /**
+     * Parse space-deliniated topics
+     * @private
+     * @param {String} topic_string Topic(s) separated by spaces
+     * @returns List of individual topics
+     * @type Array
+     */
     _private.parse_topics = function parse_topics(topic_string) {
         return topic_string.split(' ');
     };
 
+
+
+    /**
+     * Execute callback for published topic
+     * @private
+     * @param {Object} context Context used for `this` in callback
+     * @param {String} topic Current topic with a registered callback
+     * @param {String} full_topic Current topic being published
+     * @param {Array} msg Data to be passed to callback function
+     */
     _private.publish = function publish(context, topic, full_topic, msg) {
         msg = msg.slice();
-        if(_private.topics[topic] && full_topic) {
+        if (_private.topics[topic] && full_topic) {
             msg.unshift(full_topic);
-            window.requestAnimFrame(function(){
+            window.requestAnimFrame(function () {
                 _private.topics[topic].fireWith(context, msg);
             });
         }
     };
 
-    _public.subscribe('*', function(topic) {
-        if(!console) {
-            return;
-        }
-        var args = Array.prototype.slice.call(arguments, 1);
 
-        if(console.group) {
-            console.group('PubSub Super Listner');
-            console.debug('Topic: ', topic);
-            console.debug('Arguments: ', args);
-            console.groupEnd('PubSub Super Listner');
-        } else {
-            console.log('PubSub Super Listner: ', topic, args);
+
+    /**
+     * Debug logging
+     * @namespace debug
+     */
+    _private.debug = {
+
+        /**
+         * Subscribe to all topics for logging
+         */
+        subscribe: function debugSubscribe() {
+            _public.subscribe('*', _private.debug.log);
+        },
+
+
+        /**
+         * Subscribe to all topics for debug logging
+         * @param {String} topic PubSub topic
+         */
+        log: function debugLog(topic) {
+            var args;
+
+            // return if console is not defined
+            if (!window.console) {
+                return;
+            }
+
+            // return if not in debug mode
+            if (!_public.debug) {
+                return;
+            }
+
+            // Get arguments passed to the callback
+            args = Array.prototype.slice.call(arguments, 1);
+
+            // Use group logging if available
+            if (console.group) {
+                console.group('PubSub Super Listner');
+                console.debug('Topic: ', topic);
+                console.debug('Arguments: ', args);
+                console.groupEnd('PubSub Super Listner');
+            } else {
+                console.log('PubSub Super Listner: ', topic, args);
+            }
         }
-    });
+
+    };
+    // end: __private.debug
+
+
+
+    /*
+     * Initialize
+     */
+    (function init() {
+        _private.debug.subscribe();
+    }());
+
 
 
     // Expose private scope for unit tests
@@ -210,6 +335,8 @@ You can publish to multiple topics the same way, just remember that the system a
         _public._ = _private;
     }
 
+
+    // Expose scope on jQuery object
     $.pubsub = _public;
 
-}(jQuery));
+}(window.jQuery));
