@@ -19,9 +19,14 @@
      * Paths
      */
     var paths = {
-        base: './src',
-        src: './src/**/*.js',
-        dest: './dist/'
+        scripts: {
+            base: './src',
+            src: './src/**/*.js',
+            dest: './dist/'
+        },
+        test: {
+            coverage: './coverage/**/lcov.info'
+        }
     };
 
 
@@ -36,7 +41,7 @@
 
     // Lint with jshint
     gulp.task('lint', function () {
-        return gulp.src(paths.src)
+        return gulp.src(paths.scripts.src)
             .pipe(jshint())
             .pipe(jshint.reporter(stylish));
     });
@@ -51,8 +56,12 @@
             // a failing test will cause an exception
             // in done without this wrapping anon fn
             done();
+            gulp.run('cover');
+            // Run is deprecated -- @TODO : find a way to use watch in the future
+            // gulp.watch(paths.test.coverage, ['cover']);
         });
     });
+
 
     // Watch for file changes and re-run tests on each change
     gulp.task('tdd', function (done) {
@@ -64,17 +73,17 @@
 
 
     // Build: copy and minify
-    gulp.task('build', ['lint', 'test', 'cover'], function () {
-        return gulp.src(paths.src, { base: paths.base })
-            .pipe(gulp.dest(paths.dest))
+    gulp.task('build', ['lint', 'test'], function () {
+        return gulp.src(paths.scripts.src, { base: paths.scripts.base })
+            .pipe(gulp.dest(paths.scripts.dest))
             .pipe(uglify())
             .pipe(rename('jquery.pubsub.min.js'))
             .pipe(gulp.dest('dist'));
     });
 
 
-    gulp.task('cover', ['test'], function () {
-        return gulp.src('coverage/**/lcov.info')
+    gulp.task('cover', function () {
+        return gulp.src(paths.test.coverage)
             .pipe(coveralls());
     });
 
