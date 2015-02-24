@@ -1,9 +1,9 @@
 /*!
  * $ PubSub Plugin 1.1
- * https://github.com/KanbanSolutions/jquery-pubsub
+ * https://github.com/Digitalxero/jquery-pubsub
  * Requires $ 1.7.2
  *
- * Copyright (c) 2012, Kanban Solutions
+ * Copyright (c) 2012, Digitalxero LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
