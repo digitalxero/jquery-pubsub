@@ -16,8 +16,8 @@
     "pubsub",
     "plugin"
   ],
-  "author": "Dj Gilcrease / Kanban Solutions",
-  "license": "ISC",
+  "author": "Dj Gilcrease",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Digitalxero/jquery-pubsub/issues"
   },
