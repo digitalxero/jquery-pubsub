@@ -8,15 +8,14 @@
     "subscribe",
     "events"
   ],
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": {
-    "name": "Kanban Solutions"
+    "name": "Dj Gilcrease"
   },
   "maintainers": [
     {
-      "name": "Kanban Solutions",
-      "email": "dj.gilcrease@kanbansolutions.com",
-      "url": "http://www.kanbansolutions.com"
+      "name": "Digitalxero LLC",
+      "email": "digitalxero@gmail.com",
     }
   ],
   "licenses": [
@@ -25,9 +24,9 @@
       "url": "https://raw.github.com/KanbanSolutions/jquery-pubsub/master/LICENSE.md"
     }
   ],
-  "bugs": "https://github.com/KanbanSolutions/jquery-pubsub/issues",
-  "homepage": "https://github.com/KanbanSolutions/jquery-pubsub",
-  "docs": "https://github.com/KanbanSolutions/jquery-pubsub",
+  "bugs": "https://github.com/Digitalxero/jquery-pubsub/issues",
+  "homepage": "https://github.com/Digitalxero/jquery-pubsub",
+  "docs": "https://github.com/Digitalxero/jquery-pubsub",
   "dependencies": {
     "jquery": ">=1.7"
   }
