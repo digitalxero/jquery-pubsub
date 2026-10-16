@@ -1,0 +1,14 @@
+version: '3'
+tasks:
+  tools:
+    desc: Install pinned svu and chglog
+    cmds: ['{{.PYTHON | default "python3"}} "{{.TASKFILE_DIR}}/release.py" install']
+  version:next:
+    desc: Calculate the next version with svu
+    cmds: ['{{.PYTHON | default "python3"}} "{{.TASKFILE_DIR}}/release.py" next']
+  changelog:
+    desc: Prepare a changelog using svu and chglog; no tag or publish
+    cmds: ['{{.PYTHON | default "python3"}} "{{.TASKFILE_DIR}}/release.py" changelog']
+  tag:
+    desc: Explicitly create a local svu version tag after review and CI; no push
+    cmds: ['{{.PYTHON | default "python3"}} "{{.TASKFILE_DIR}}/release.py" tag']
