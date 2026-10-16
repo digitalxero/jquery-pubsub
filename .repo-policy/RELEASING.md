@@ -12,6 +12,9 @@ The standalone fallback below does not replace project-specific packaging.
 3. Inspect the next version: `python3 .repo-policy/release.py next`.
 4. Prepare changelogs: `python3 .repo-policy/release.py changelog`.
 5. Review and commit the generated changelog through normal CI and merge policy.
+   On first adoption, hand-maintained notes are preserved byte-for-byte in
+   `CHANGELOG.history.md` and linked from the generated changelog. Commit that
+   archive too; subsequent releases retain its link and contents.
 6. On the verified, clean release commit, explicitly create the local tag with
    `python3 .repo-policy/release.py tag`, then push only that tag when authorized.
 

@@ -29,8 +29,12 @@ def check(base=None, head=None, title=None):
         base = git("rev-parse", "--verify", "--end-of-options", base + "^{commit}")
         commits = git("rev-list", base + ".." + head).splitlines()
     else:
-        # First push into an existing/imported repository must not re-audit its old history.
-        commits = [head]
+        # Audit from policy introduction on a new branch/initial push. This checks all
+        # introduced commits while leaving imported history before adoption alone.
+        introduced = git("log", "--reverse", "--diff-filter=A", "--format=%H", head,
+                         "--", ".repo-policy/check.py").splitlines()
+        parents = git("rev-list", "--parents", "-n", "1", introduced[0]).split()[1:] if introduced else []
+        commits = git("rev-list", head, *("^" + p for p in parents)).splitlines()
     failures = []
     for commit in commits:
         message = git("show", "-s", "--format=%B", commit)

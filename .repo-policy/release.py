@@ -31,6 +31,39 @@ def next_version():
         return run("svu", "next", "--config", str(config))
 
 
+def changelog(version):
+    ledger = ROOT / "changelog.yml"
+    output = ROOT / "CHANGELOG.md"
+    history = ROOT / "CHANGELOG.history.md"
+    old_ledger = ledger.read_bytes() if ledger.exists() else None
+    manual = output.read_bytes() if old_ledger is None and output.exists() else None
+    if manual is not None and history.exists() and history.read_bytes() != manual:
+        raise ValueError("CHANGELOG.history.md already exists; reconcile history before preparing a release")
+    try:
+        if old_ledger is None:
+            if versioned_tags():
+                run("chglog", "init", "--conventional-commits", "--exclude-merge-commits", capture=False)
+            else:
+                # chglog init rejects a tagless repo; add supports an empty ledger.
+                ledger.write_text("[]\n", encoding="utf-8")
+        run("chglog", "add", "--version", version, "--conventional-commits", "--exclude-merge-commits", capture=False)
+        with tempfile.TemporaryDirectory() as folder:
+            rendered = Path(folder) / "CHANGELOG.md"
+            run("chglog", "format", "--template", "repo", "--output", str(rendered), capture=False)
+            content = rendered.read_bytes()
+        if manual is not None:
+            history.write_bytes(manual)
+        if history.exists():
+            content += b"\nEarlier release notes: [preserved changelog history](CHANGELOG.history.md).\n"
+        output.write_bytes(content)
+    except Exception:
+        if old_ledger is None:
+            ledger.unlink(missing_ok=True)
+        else:
+            ledger.write_bytes(old_ledger)
+        raise
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=["next", "changelog", "tag", "install"])
@@ -46,15 +79,8 @@ def main():
         print(version)
         return
     if args.command == "changelog":
-        if not (ROOT / "changelog.yml").exists():
-            if versioned_tags():
-                run("chglog", "init", "--conventional-commits", "--exclude-merge-commits", capture=False)
-            else:
-                # chglog init rejects a tagless repo; add supports an empty ledger.
-                (ROOT / "changelog.yml").write_text("[]\n", encoding="utf-8")
-        run("chglog", "add", "--version", version, "--conventional-commits", "--exclude-merge-commits", capture=False)
-        run("chglog", "format", "--template", "repo", "--output", "CHANGELOG.md", capture=False)
-        print("Review and commit changelog.yml and CHANGELOG.md through normal CI before tagging.")
+        changelog(version)
+        print("Review and commit changelog.yml, CHANGELOG.md and any CHANGELOG.history.md through normal CI before tagging.")
         return
     if run("git", "status", "--porcelain"):
         raise ValueError("Refusing to tag a dirty checkout")
